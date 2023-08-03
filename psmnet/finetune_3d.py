@@ -60,7 +60,7 @@ all_left_img, all_right_img, all_left_disp, = ls.dataloader(args.datapath,
 
 TrainImgLoader = torch.utils.data.DataLoader(
     DA.myImageFloder(all_left_img, all_right_img, all_left_disp, True),
-    batch_size=args.btrain, shuffle=True, num_workers=14, drop_last=False)
+    batch_size=args.btrain, shuffle=True, num_workers=12, drop_last=False)
 
 if args.model == 'stackhourglass':
     model = stackhourglass(args.maxdisp)
@@ -115,7 +115,7 @@ def train(imgL, imgR, disp_L):
     loss.backward()
     optimizer.step()
 
-    return loss.data[0]
+    return loss.data.item()
 
 
 def test(imgL, imgR, disp_true):
@@ -162,6 +162,7 @@ def main():
         adjust_learning_rate(optimizer, epoch)
 
         ## training ##
+        print(len([batch_idx for batch_idx, (imgL_crop, imgR_crop, disp_crop_L) in enumerate(TrainImgLoader)]))
         for batch_idx, (imgL_crop, imgR_crop, disp_crop_L) in enumerate(TrainImgLoader):
             start_time = time.time()
 
